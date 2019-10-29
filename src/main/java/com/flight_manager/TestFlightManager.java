@@ -29,22 +29,26 @@ public class TestFlightManager {
 		for(Airport airport: airports){
 			manager.printAirport(airport);
 		}
-
 		System.out.println();
-		// print student
-		manager.printAirport(manager.getAirport("det"));
+		// get the airline
+		manager.printAirline(manager.getAirline("bat"));
+		// add a airline
+		manager.addAirline();
+		// update airline
+		manager.updateAirline(manager.getAirline("baair"));
+		// print airport
+		// manager.printAirport(manager.getAirport("det"));
 
-		System.out.println();
-		// update student
+		// System.out.println();
+		// update airport
 		// studentDAO.updateStudent(studentDAO.getStudent(6));
 
-		System.out.println();
+		// System.out.println();
 		// delete student
 		//studentDAO.deleteStudent(studentDAO.getStudent(7));
 
 		System.out.println();
-		// add a student
-		manager.addAirline();
+
 
 		// close the connection
 		ConnectionManager.getInstance().close();

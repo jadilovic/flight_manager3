@@ -149,23 +149,38 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 
 		System.out.print("Enter airline name: ");
 		String name = input.next();
+		
+		if(getAirline(name) != null){
+			System.out.println("Entered Airline name '" + name + "' already exists");
+		}
+		else if(name.length() > 5){
+			System.out.println("Length of the Airline name '" + name + "' is greater than 5 characters");
+		}
+		else if(!onlyAlphabets(name)){
+			System.out.println("Entered Airline name '" + name + "' does not contain all alphabets");
+		} else {
+			try (
+					// java.sql.Statement
+					PreparedStatement statement = connection.prepareStatement(query);) {
 
+				// fill in the placeholders/parameters
+				statement.setString(1, name);
+
+				// execute the query
+				statement.executeUpdate();
+
+				System.out.println("Airline " + name + " added to the database.");
+			}
+		}
 		// close the scanner
 		input.close();
+	}
 
-		try (
-				// java.sql.Statement
-				PreparedStatement statement = connection.prepareStatement(query);) {
-
-			// fill in the placeholders/parameters
-			statement.setString(1, name);
-
-			// execute the query
-			statement.executeUpdate();
-
-			System.out.println("Airline " + name + " added to the database.");
-		}
-
+	// Checking if given name is all alphabets
+	private static boolean onlyAlphabets(String name) {
+        return ((name != null) 
+                && (!name.equals("")) 
+                && (name.matches("^[a-zA-Z]*$")));
 	}
 
 	@Override
