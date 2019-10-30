@@ -17,7 +17,7 @@ public interface SeatDAOInterface {
 	public Seat getSeatByOther(String row, int seatNum, int flightId) throws SQLException;
 
 	// method to create seats
-	public void createSeats() throws SQLException;
+	public void createSeats(int numSeatsInRow, Integer flightId) throws SQLException;
 	
 	// method to book a seat on specific flight
 	public void bookSeat() throws SQLException;

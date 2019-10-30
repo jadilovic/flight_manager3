@@ -43,7 +43,7 @@ public class TestFlightManager {
 		// manager.addAirport();
 		// print airport
 		//manager.printAirport(manager.getAirport("det"));
-		System.out.println();
+		// System.out.println();
 		// System.out.println();
 		
 		// add flight
@@ -52,10 +52,16 @@ public class TestFlightManager {
 		//manager.printFlight(manager.getFlight(1));
 		
 		// print seats
-		manager.getAllFlightSeats(1);
+		manager.getAllFlightSeats(3);
 
 		System.out.println();
-
+		manager.printSeat(manager.getSeatById(35));
+		System.out.println();
+		manager.getSeatById(32);
+		System.out.println();
+		manager.printSeat(manager.getSeatByOther("B", 2, 1));
+		// manager.addFlight();
+		manager.bookSeat();
 
 		// close the connection
 		ConnectionManager.getInstance().close();
