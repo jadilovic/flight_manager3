@@ -89,29 +89,36 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 			// create an SELECT SQL query
 			String query = "UPDATE airline SET name = ? WHERE name = ?";
 
-			// new Scanner
-			java.util.Scanner input = new java.util.Scanner(System.in);
-
 			System.out.print("Set a new name for airline (current: " + airline.getName() + " ): ");
-			String name = input.next();
+			String givenName = enterString();
+			
+			if(validAirlineName(givenName)){
+				String updatedName = airline.getName();
+				try (
+						// java.sql.Statement
+						PreparedStatement statement = connection.prepareStatement(query);) {
 
-			// close the scanner
-			input.close();
+					// fill in the placeholders/parameters
+					statement.setString(1, givenName);
+					statement.setString(2, updatedName);
 
-			try (
-					// java.sql.Statement
-					PreparedStatement statement = connection.prepareStatement(query);) {
+					// execute the query
+					statement.executeUpdate();
 
-				// fill in the placeholders/parameters
-				statement.setString(1, name);
-				statement.setString(2, airline.getName());
-
-				// execute the query
-				statement.executeUpdate();
-
-				System.out.println("Airline " + airline.getName() + " updated in the database.");
+					System.out.println("Airline '" + airline.getName() + "' updated to"
+							+ " '" + givenName + "' in the database.");
+				}
 			}
 		}
+	}
+
+	private String enterString() {
+		// new Scanner
+		java.util.Scanner input = new java.util.Scanner(System.in);
+			String text = input.next();
+		// close the scanner
+		// input.close();
+		return text;
 	}
 
 	@Override
@@ -144,21 +151,10 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		// create an SELECT SQL query
 		String query = "INSERT INTO airline (name) VALUES (?)";
 
-		// new Scanner
-		java.util.Scanner input = new java.util.Scanner(System.in);
-
 		System.out.print("Enter airline name: ");
-		String name = input.next();
+		String name = enterString();
 		
-		if(getAirline(name) != null){
-			System.out.println("Entered Airline name '" + name + "' already exists");
-		}
-		else if(name.length() > 5){
-			System.out.println("Length of the Airline name '" + name + "' is greater than 5 characters");
-		}
-		else if(!onlyAlphabets(name)){
-			System.out.println("Entered Airline name '" + name + "' does not contain all alphabets");
-		} else {
+		if(validAirlineName(name) && !airlineExists(name)){
 			try (
 					// java.sql.Statement
 					PreparedStatement statement = connection.prepareStatement(query);) {
@@ -172,8 +168,26 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 				System.out.println("Airline " + name + " added to the database.");
 			}
 		}
-		// close the scanner
-		input.close();
+	}
+
+	private boolean airlineExists(String name) throws SQLException {
+		if(getAirline(name) != null){
+			System.out.println("Entered Airline name '" + name + "' already exists");
+			return true;
+		}
+		return false;
+	}
+
+	private boolean validAirlineName(String name) throws SQLException {
+		if(name.length() > 5){
+			System.out.println("Length of the Airline name '" + name + "' is greater than 5 characters");
+			return false;
+		}
+		else if(!onlyAlphabets(name)){
+			System.out.println("Entered Airline name '" + name + "' does not contain all alphabets");
+			return false;
+		} else
+		return true;
 	}
 
 	// Checking if given name is all alphabets
@@ -265,33 +279,41 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 			// create an SELECT SQL query
 			String query = "UPDATE airport SET name = ?, city = ? WHERE name = ?";
 
-			// new Scanner
-			java.util.Scanner input = new java.util.Scanner(System.in);
-
 			System.out.print("Set a new name for airport (current: " + airport.getName() + " ): ");
-			String name = input.next();
+			String name = enterString();
 			
 			System.out.print("Set a new name for city (current: " + airport.getCity() + " ): ");
-			String city = input.next();
+			String city = enterString();
+			
+			if(validAirportName(name)){
+				try (
+						// java.sql.Statement
+						PreparedStatement statement = connection.prepareStatement(query);) {
 
-			// close the scanner
-			input.close();
+					// fill in the placeholders/parameters
+					statement.setString(1, name);
+					statement.setString(2, city);
+					statement.setString(3, airport.getName());
 
-			try (
-					// java.sql.Statement
-					PreparedStatement statement = connection.prepareStatement(query);) {
+					// execute the query
+					statement.executeUpdate();
 
-				// fill in the placeholders/parameters
-				statement.setString(1, name);
-				statement.setString(2, city);
-				statement.setString(3, airport.getName());
-
-				// execute the query
-				statement.executeUpdate();
-
-				System.out.println("Airport " + name + " updated in the database.");
+					System.out.println("Airport " + name + " updated in the database.");
+				}
 			}
 		}
+	}
+
+	private boolean validAirportName(String name) throws SQLException {
+		if(name.length() > 3){
+			System.out.println("Length of the Airport name '" + name + "' is greater than 5 characters");
+			return false;
+		}
+		else if(!onlyAlphabets(name)){
+			System.out.println("Entered Airport name '" + name + "' does not contain all alphabets");
+			return false;
+		} else 
+		return true;
 	}
 
 	@Override
@@ -324,31 +346,35 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		// create an SELECT SQL query
 		String query = "INSERT INTO airport (name, city) VALUES (?, ?)";
 
-		// new Scanner
-		java.util.Scanner input = new java.util.Scanner(System.in);
-
 		System.out.print("Enter airport name: ");
-		String name = input.next();
+		String name = enterString();
 		
 		System.out.print("Enter city: ");
-		String city = input.next();
+		String city = enterString();
 
-		// close the scanner
-		input.close();
+		if(validAirportName(name) && !airportExists(name)){
+			try (
+					// java.sql.Statement
+					PreparedStatement statement = connection.prepareStatement(query);) {
 
-		try (
-				// java.sql.Statement
-				PreparedStatement statement = connection.prepareStatement(query);) {
+				// fill in the placeholders/parameters
+				statement.setString(1, name);
+				statement.setString(2, city);
 
-			// fill in the placeholders/parameters
-			statement.setString(1, name);
-			statement.setString(2, city);
+				// execute the query
+				statement.executeUpdate();
 
-			// execute the query
-			statement.executeUpdate();
-
-			System.out.println("Airport " + name + " in the city " + city + " added to the database.");
+				System.out.println("Airport " + name + " in the city " + city + " added to the database.");
+			}
 		}
+	}
+
+	private boolean airportExists(String name) throws SQLException {
+			if(getAirport(name) != null){
+				System.out.println("Entered Airport name '" + name + "' already exists");
+				return true;
+			}
+		return false;
 	}
 
 	@Override

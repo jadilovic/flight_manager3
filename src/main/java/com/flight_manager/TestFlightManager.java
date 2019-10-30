@@ -31,17 +31,17 @@ public class TestFlightManager {
 		}
 		System.out.println();
 		// get the airline
-		manager.printAirline(manager.getAirline("bat"));
+		// manager.printAirline(manager.getAirline("bat"));
 		// add a airline
-		manager.addAirline();
+		// manager.addAirline();
 		// update airline
-		manager.updateAirline(manager.getAirline("baair"));
+		// manager.updateAirline(manager.getAirline("bair"));
+		
 		// print airport
-		// manager.printAirport(manager.getAirport("det"));
-
-		// System.out.println();
+		 manager.printAirport(manager.getAirport("det"));
+		 System.out.println();
 		// update airport
-		// studentDAO.updateStudent(studentDAO.getStudent(6));
+		manager.updateAirport(manager.getAirport("det"));
 
 		// System.out.println();
 		// delete student
