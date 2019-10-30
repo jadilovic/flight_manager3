@@ -9,16 +9,21 @@ import java.util.ArrayList;
 
 import DTO.Airline;
 import DTO.Airport;
+import DTO.Flight;
+import DTO.Seat;
 
 /**
- * Airline Implementation
+ * IMPLEMENTATION OF ALL DAO INTERFACES
  */
 
-public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterface {
+public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterface, 
+												FlightDAOInterface, SeatDAOInterface {
 
 	// connect to the database
 	Connection connection = ConnectionManager.getInstance().getConnection();
 
+	// IMPLEMENTATION OF AIRLINE INTERFACE
+	
 	@Override
 	public ArrayList<Airline> getAllAirlines() throws SQLException {
 
@@ -82,36 +87,6 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		return airline;
 	}
 
-	@Override
-	public void updateAirline(Airline airline) throws SQLException {
-		if (airline != null) {
-
-			// create an SELECT SQL query
-			String query = "UPDATE airline SET name = ? WHERE name = ?";
-
-			System.out.print("Set a new name for airline (current: " + airline.getName() + " ): ");
-			String givenName = enterString();
-			
-			if(validAirlineName(givenName)){
-				String updatedName = airline.getName();
-				try (
-						// java.sql.Statement
-						PreparedStatement statement = connection.prepareStatement(query);) {
-
-					// fill in the placeholders/parameters
-					statement.setString(1, givenName);
-					statement.setString(2, updatedName);
-
-					// execute the query
-					statement.executeUpdate();
-
-					System.out.println("Airline '" + airline.getName() + "' updated to"
-							+ " '" + givenName + "' in the database.");
-				}
-			}
-		}
-	}
-
 	private String enterString() {
 		// new Scanner
 		java.util.Scanner input = new java.util.Scanner(System.in);
@@ -119,30 +94,6 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		// close the scanner
 		// input.close();
 		return text;
-	}
-
-	@Override
-	public void deleteAirline(Airline airline) throws SQLException {
-		if (airline != null) {
-			// create an SELECT SQL query
-			String query = "DELETE FROM airline WHERE name = ?";
-
-			try (
-					// java.sql.Statement
-					PreparedStatement statement = connection.prepareStatement(query);) {
-
-				// Name of airline to be deleted
-				String airlineNameDeleted = airline.getName();
-				
-				// fill in the placeholders/parameters
-				statement.setString(1, airline.getName());
-
-				// execute the query
-				statement.executeUpdate();
-
-				System.out.println("Airline " + airlineNameDeleted + " deleted from the database.");
-			}
-		}
 	}
 
 	@Override
@@ -273,74 +224,6 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	}
 
 	@Override
-	public void updateAirport(Airport airport) throws SQLException {
-		if (airport != null) {
-
-			// create an SELECT SQL query
-			String query = "UPDATE airport SET name = ?, city = ? WHERE name = ?";
-
-			System.out.print("Set a new name for airport (current: " + airport.getName() + " ): ");
-			String name = enterString();
-			
-			System.out.print("Set a new name for city (current: " + airport.getCity() + " ): ");
-			String city = enterString();
-			
-			if(validAirportName(name)){
-				try (
-						// java.sql.Statement
-						PreparedStatement statement = connection.prepareStatement(query);) {
-
-					// fill in the placeholders/parameters
-					statement.setString(1, name);
-					statement.setString(2, city);
-					statement.setString(3, airport.getName());
-
-					// execute the query
-					statement.executeUpdate();
-
-					System.out.println("Airport " + name + " updated in the database.");
-				}
-			}
-		}
-	}
-
-	private boolean validAirportName(String name) throws SQLException {
-		if(name.length() > 3){
-			System.out.println("Length of the Airport name '" + name + "' is greater than 5 characters");
-			return false;
-		}
-		else if(!onlyAlphabets(name)){
-			System.out.println("Entered Airport name '" + name + "' does not contain all alphabets");
-			return false;
-		} else 
-		return true;
-	}
-
-	@Override
-	public void deleteAirport(Airport airport) throws SQLException {
-		if (airport != null) {
-			// create an SELECT SQL query
-			String query = "DELETE FROM airport WHERE name = ?";
-
-			try (
-					// java.sql.Statement
-					PreparedStatement statement = connection.prepareStatement(query);) {
-
-				// Name of airport to be deleted
-				String airportNameDeleted = airport.getName();
-				
-				// fill in the placeholders/parameters
-				statement.setString(1, airportNameDeleted);
-
-				// execute the query
-				statement.executeUpdate();
-
-				System.out.println("Airline " + airportNameDeleted + " deleted from the database.");
-			}
-		}
-	}
-
-	@Override
 	public void addAirport() throws SQLException {
 
 		// create an SELECT SQL query
@@ -369,6 +252,18 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		}
 	}
 
+	private boolean validAirportName(String name) throws SQLException {
+		if(name.length() != 3){
+			System.out.println("Length of the Airport name '" + name + "' must be exactly 3 characters");
+			return false;
+		}
+		else if(!onlyAlphabets(name)){
+			System.out.println("Entered Airport name '" + name + "' does not contain all alphabets");
+			return false;
+		} else 
+		return true;
+	}
+
 	private boolean airportExists(String name) throws SQLException {
 			if(getAirport(name) != null){
 				System.out.println("Entered Airport name '" + name + "' already exists");
@@ -384,6 +279,211 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		} else {
 			System.out.println("No airport to print.");
 		}
+	}
+	
+	// FLIGHT INTERFACE IMPLEMENTATION
+
+	@Override
+	public ArrayList<Flight> getAllFlights() throws SQLException {
+
+		// create an array list to hold flights
+		ArrayList<Flight> flights = new ArrayList<>();
+
+		// create an SELECT SQL query
+		String query = "SELECT * FROM flight";
+
+		// create a new ResultSet
+		ResultSet rs = null;
+
+		try (
+				// java.sql.Statement
+				Statement statement = connection.createStatement();) {
+
+			// execute the query
+			rs = statement.executeQuery(query);
+
+			// add airports to the arrayList
+			while (rs.next()) {
+				flights.add(new Flight(rs.getInt("id"), rs.getString("flight_name"), rs.getString("origin"), 
+						rs.getString("destination"), rs.getString("airport"), rs.getString("airline")));
+				System.out.println("Flight: " + rs.getString("flight_name") + " with origin "
+						+ rs.getString("origin") + " and destination " + rs.getString("destination")
+						+ " and id: " + rs.getInt("id") + " added to flights");
+			}
+		}
+		return flights;
+	}
+
+	@Override
+	public Flight getFlight(Integer id) throws SQLException {
+
+		// null flight
+		Flight flight = null;
+
+		// create an SELECT SQL query
+		String query = "SELECT * FROM flight WHERE id = ?";
+
+		// create a new ResultSet
+		ResultSet rs = null;
+
+		try (
+				// java.sql.Statement
+				PreparedStatement pstatement = connection.prepareStatement(query);) {
+
+			// fill in the placeholders/parameters
+			pstatement.setInt(1, id);
+
+			// execute the query
+			rs = pstatement.executeQuery();
+
+			// set the cursor
+			if (rs.next()) {
+
+				// populate flight
+				flight = new Flight(rs.getInt("id"), rs.getString("flight_name"), rs.getString("origin"), 
+						rs.getString("destination"), rs.getString("airport"), rs.getString("airline"));
+
+				// close the ResultSet
+				rs.close();
+			}
+		}
+		return flight;
+	}
+
+	@Override
+	public void addFlight() throws SQLException {
+		// create an SELECT SQL query
+				String query = "INSERT INTO flight (id, flight_name, origin, destination, airport, airline) "
+						+ "VALUES (?, ?, ?, ?, ?, ?)";
+
+				System.out.print("Enter unique ID of the flight: ");
+				Integer id = uniqueFlightID();
+				if(id != null){
+					System.out.print("Enter flight name: ");
+					String flightName = enterString();
+					
+					System.out.print("Enter origin: ");
+					String origin = enterString();
+					
+					System.out.print("Enter destination: ");
+					String destination = enterString();
+					
+					System.out.print("Enter airport: ");
+					String airport = enterString();
+					
+					System.out.print("Enter airline: ");
+					String airline = enterString();
+					
+					if(airportExists(airport) && airlineExists(airline)){
+						
+						try (
+								// java.sql.Statement
+								PreparedStatement statement = connection.prepareStatement(query);) {
+
+							// fill in the placeholders/parameters
+							statement.setInt(1, id);
+							statement.setString(2, flightName);
+							statement.setString(3, origin);
+							statement.setString(4, destination);
+							statement.setString(5, airport);
+							statement.setString(6, airline);
+
+							// execute the query
+							statement.executeUpdate();
+
+							System.out.println("Flight with id " + id + " and flight name " + flightName + " "
+									+ " origin " + origin + " and destination " + destination + " "
+											+ "added to the database.");
+						}
+					}
+				}
+			}
+	
+	private Integer uniqueFlightID() throws SQLException {
+		java.util.Scanner input = new java.util.Scanner(System.in);
+		Integer id = input.nextInt();
+		Flight newFlight = getFlight(id);
+		if(newFlight == null)
+			return id;
+		else{
+			System.out.println("Flight with id number " + id + " already exists");
+			return null;
+		}
+	}
+
+	@Override
+	public void printFlight(Flight flight) {
+		if (flight != null) {
+			System.out.println("Flight name: " + flight.getFlight_name() + ", flight id: " + flight.getId() + ""
+					+ ", airline: " + flight.getAirline() + ", origin: " + flight.getOrigin() + ""
+							+ " and destination " + flight.getDestination());
+		} else {
+			System.out.println("No airport to print.");
+		}
+	}
+	
+	// SEAT INTERFACE IMPLEMENTATION
+
+	@Override
+	public ArrayList<Seat> getAllFlightSeats(Integer flightId) throws SQLException {
+
+		// create an array list to hold all seats for one flight
+		ArrayList<Seat> flightSeats = new ArrayList<>();
+
+		// create an SELECT SQL query
+		String query = "SELECT * FROM seats WHERE flightID = ?";
+
+		// create a new ResultSet
+		ResultSet rs = null;
+
+		try (
+				// java.sql.Statement
+				PreparedStatement statement = connection.prepareStatement(query);) {
+
+			statement.setInt(1, flightId);
+			// execute the query
+			rs = statement.executeQuery();
+
+			// add airports to the arrayList
+			while (rs.next()) {
+				flightSeats.add(new Seat(rs.getInt("seatID"), rs.getString("rowLetter"), rs.getInt("seat_number"), 
+						rs.getBoolean("available"), rs.getInt("flightID")));
+				System.out.println("Seat: " + rs.getInt("seatID") + ", " + rs.getString("rowLetter") + ""
+						+ ", " + rs.getInt("seat_number") + ", " + rs.getBoolean("available") + ","
+								+ " " + rs.getInt("flightID"));
+			}
+		}
+		return flightSeats;
+	}
+
+	@Override
+	public Seat getSeatById(Integer id) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Seat getSeatByOther(String row, int seatNum, int flightId) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void createSeats() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bookSeat() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printSeat(Seat seat) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
