@@ -116,7 +116,7 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 					PreparedStatement statement = connection.prepareStatement(query);) {
 
 				// fill in the placeholders/parameters
-				statement.setString(1, name);
+				statement.setString(1, name.toUpperCase());
 
 				// execute the query
 				statement.executeUpdate();
@@ -243,7 +243,7 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 					PreparedStatement statement = connection.prepareStatement(query);) {
 
 				// fill in the placeholders/parameters
-				statement.setString(1, name);
+				statement.setString(1, name.toUpperCase());
 				statement.setString(2, city);
 
 				// execute the query
@@ -388,7 +388,7 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 
 					// fill in the placeholders/parameters
 					statement.setInt(1, flightId);
-					statement.setString(2, flightName);
+					statement.setString(2, flightName.toUpperCase());
 					statement.setString(3, origin);
 					statement.setString(4, destination);
 					statement.setString(5, airport);
@@ -590,7 +590,11 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		Integer flightId = enterInteger();
 		
 		if(getFlight(flightId) != null){
-			getAllFlightSeats(flightId);
+			List<Seat> seats = getAllFlightSeats(flightId);
+			System.out.println("SeatID Row Seat# Available FlightID");
+			for(Seat seat: seats){
+				printSeat(seat);
+			}
 			System.out.println("Please choose from available seats. Enter seat id.");
 			
 			int seatId = enterInteger();

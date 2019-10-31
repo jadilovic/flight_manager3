@@ -3,36 +3,41 @@ package com.flight_manager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import DAO.ConnectionManager;
 import DAO.SystemManagerDAO;
 import DTO.Airline;
 import DTO.Airport;
+import DTO.Flight;
 
 public class TestFlightManager {
+	
+	static Scanner input = new Scanner(System.in);
+	static SystemManagerDAO manager = new SystemManagerDAO();
 
 	public static void main(String[] args) throws SQLException {
 		
-		Scanner input = new Scanner(System.in);
-		SystemManagerDAO manager = new SystemManagerDAO();
-		
 		int option = 0;
 		
-		while(option != 6){
+		while(option != 9){
 		System.out.println("\nPlease select option: \n"
 				+ "1 to create airport. \n"
 				+ "2 to create airline. \n"
 				+ "3 to create flight. \n"
-				+ "4 to find flight. \n"
-				+ "5 to book a seat on a flight. \n"
-				+ "6 to exit the application.");
+				+ "4 to list all airports. \n"
+				+ "5 to list all airlines. \n"
+				+ "6 to list all flights. \n"
+				+ "7 to find a flight. \n"
+				+ "8 to book a seat. \n"
+				+ "9 to exit the application.");
 		
 		try{
 			option = input.nextInt();
 		} catch(InputMismatchException ime){
 			System.out.println("Wrong data entered. Please try again");
-			option = 6;
+			option = 9;
 		}
 			switch(option){
 			case 1: 
@@ -48,73 +53,50 @@ public class TestFlightManager {
 				manager.addFlight();;
 				break;
 			case 4:
-				// Find Flight
-				// enterOriginAndDestination();
+				// list all airports
+				manager.getAllAirports();
 				break;
 			case 5:
-				// Book Seat
-				// enterDataToBookSeat();
+				// list all airlines
+				manager.getAllAirlines();
 				break;
 			case 6:
+				// list all flights
+				listAllFlights();
+				break;
+			case 7:
+				// find a flight
+				enterOriginAndDestination();
+				break;
+			case 8:
+				// Book Seat
+				manager.bookSeat();
+				break;
+			case 9:
 				break;
 			default: 
 				System.out.println("Wrong option. Please try again");
 			break;
 			}
 		}
-		input.close();
-		// get all airlines
-		//ArrayList<Airline> airlines = (ArrayList<Airline>) manager.getAllAirlines();
-		
-		// get all airports
-		//ArrayList<Airport> airports = (ArrayList<Airport>) manager.getAllAirports();
+	}
 
-		// print all airlines
-		//for (Airline airline : airlines) {
-		//	manager.printAirline(airline);
-		//}
-		
-		// print all airports
-		//for(Airport airport: airports){
-		//	manager.printAirport(airport);
-		//}
-		//System.out.println();
-		// get the airline
-		//manager.printAirline(manager.getAirline("vat"));
-		//manager.addAirport();
-		// add a airline
-		// manager.addAirline();
-		// print airline
-		// manager.printAirline(manager.getAirline("emirat"));
+	private static void listAllFlights() throws SQLException {
+		List<Flight> flights = manager.getAllFlights();
+		for(Flight flight: flights)
+			manager.printFlight(flight);
+	}
 
-		// get the airport
-		// manager.printAirport(manager.getAirport("bi"));
-		// add airport
-		// manager.addAirport();
-		// print airport
-		//manager.printAirport(manager.getAirport("det"));
-		// System.out.println();
-		// System.out.println();
-		
-		// add flight
-		// manager.addFlight();
-		// print flight
-		//manager.printFlight(manager.getFlight(1));
-		
-		// print seats
-	/*	manager.getAllFlightSeats(3);
-
-		System.out.println();
-		manager.printSeat(manager.getSeatById(35));
-		System.out.println();
-		manager.getSeatById(32);
-		System.out.println();
-		manager.printSeat(manager.getSeatByOther("B", 2, 1));
-		// manager.addFlight();
-		manager.bookSeat();
-
-		// close the connection
-		ConnectionManager.getInstance().close();
-		*/
+	private static void enterOriginAndDestination() throws SQLException {
+		System.out.println("Please enter origin of the flight");
+		String origin = input.next();
+		System.out.println("Please enter destination of the flight");
+		String destination = input.next();
+		for(Flight flight: manager.getAllFlights()){
+			if(flight.getOrigin().equals(origin) && flight.getDestination().equals(destination)){
+				System.out.println("Available flight:");
+				System.out.println(flight.toString());
+			}
+		}
 	}
 }
