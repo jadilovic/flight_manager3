@@ -4,6 +4,10 @@ public class Airline {
 	
 	private String name;
 	
+	public Airline(){
+		
+	}
+	
 	public Airline(String name){
 		setName(name);
 	}

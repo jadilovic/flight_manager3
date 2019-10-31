@@ -1,14 +1,14 @@
 package DAO;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import DTO.Seat;
 
 public interface SeatDAOInterface {
 
 	// method to get all seats
-	public ArrayList<Seat> getAllFlightSeats(Integer flightId) throws SQLException;
+	public List<Seat> getAllFlightSeats(Integer flightId) throws SQLException;
 
 	// method to get a specific seat
 	public Seat getSeatById(Integer seatId) throws SQLException;

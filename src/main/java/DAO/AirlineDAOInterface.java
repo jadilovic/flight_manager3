@@ -2,13 +2,14 @@ package DAO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import DTO.Airline;
 
 public interface AirlineDAOInterface {
 
 	// method to get all airlines
-	public ArrayList<Airline> getAllAirlines() throws SQLException;
+	public List<Airline> getAllAirlines() throws SQLException;
 
 	// method to get a specific airline
 	public Airline getAirline(String airlineName) throws SQLException;
