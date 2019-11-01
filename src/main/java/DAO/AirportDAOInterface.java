@@ -19,4 +19,6 @@ public interface AirportDAOInterface {
 
 	// method to print a specific airport
 	public void printAirport(Airport airport);
+
+	void printAllAirports(List<Airport> airports) throws SQLException;
 }

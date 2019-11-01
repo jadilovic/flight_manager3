@@ -19,4 +19,6 @@ public interface AirlineDAOInterface {
 
 	// method to print a specific airline
 	public void printAirline(Airline airline);
+
+	void printAllAirlines(List<Airline> airlines) throws SQLException;
 }

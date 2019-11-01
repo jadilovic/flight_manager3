@@ -28,7 +28,6 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	private List<Airline> listOfAirlines = new ArrayList<>();
 	private List<Airport> listOfAirports = new ArrayList<>();
 	private List<Flight> listOfFlights = new ArrayList<>();
-	private List<Seat> listOfSeats = new ArrayList<>();
 
 	// IMPLEMENTATION OF AIRLINE INTERFACE
 	
@@ -51,7 +50,6 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 			// add airlines to the arrayList
 			while (rs.next()) {
 				listOfAirlines.add(new Airline(rs.getString("name")));
-				System.out.println("Airline: " + rs.getString("name") + " added to airlines");
 			}
 		}
 		return listOfAirlines;
@@ -162,6 +160,12 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		}
 	}
 	
+	@Override
+	public void printAllAirlines(List<Airline> airlines) throws SQLException {
+		for(Airline airline: airlines)
+			printAirline(airline);
+	}
+	
 	// AIRPORT INTERFACE IMPLEMENTATION
 
 	@Override
@@ -183,8 +187,6 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 			// add airports to the arrayList
 			while (rs.next()) {
 				listOfAirports.add(new Airport(rs.getString("name"), rs.getString("city")));
-				System.out.println("Airport: " + rs.getString("name") + " in the city of "
-						+ rs.getString("city") + " added to airports");
 			}
 		}
 		return listOfAirports;
@@ -283,6 +285,12 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		}
 	}
 	
+	@Override
+	public void printAllAirports(List<Airport> airports) throws SQLException {
+		for(Airport airport: airports)
+			printAirport(airport);
+	}
+	
 	// FLIGHT INTERFACE IMPLEMENTATION
 
 	@Override
@@ -356,11 +364,11 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		int flightId = enterInteger();
 		
 		// checking if flight ID already exists
-		if(flightIdExists(flightId)){
+		if(!flightIdExists(flightId)){
 			System.out.print("Enter flight name: ");
 			String flightName = enterString();
 			// checking if flight name already exists
-			if(!flightNameExists(flightName)){
+			if(!flightNameExists(flightName.toUpperCase())){
 				System.out.print("Enter origin: ");
 				String origin = enterString();
 				// checking if origin location exists
@@ -372,12 +380,12 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 						System.out.print("Enter airport: ");
 						String airport = enterString();
 						// checking if airport exists
-						Airport enteredAirport = getAirport(airport);
+						Airport enteredAirport = getAirport(airport.toUpperCase());
 						if(enteredAirport != null && originOfAirport(enteredAirport, origin)){
 							System.out.print("Enter airline: ");
 							String airline = enterString();
 							// checking if airline exists
-							if(getAirline(airline) != null){
+							if(getAirline(airline.toUpperCase()) != null){
 								System.out.println("Please enter number of seats per row");
 								int numSeatsInRow = enterInteger();
 			// creating seats for the new created flight
@@ -424,9 +432,10 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	
 	private boolean flightIdExists(int flightId) throws SQLException {
 		Flight flight = getFlight(flightId);
-		if(flight != null)
-			return true;
-		return false;
+		if(flight.getId() == null)
+			return false;
+		else
+		return true;
 	}
 
 	private boolean originOfAirport(Airport enteredAirport, String origin) {
@@ -441,7 +450,7 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	private boolean flightNameExists(String flightName) throws SQLException {
 		listOfFlights = getAllFlights();
 		for(Flight flight: listOfFlights){
-			if(flightName.equals(flight.getFlight_name()))
+			if(flight.getFlight_name().equals(flightName))
 				return true;
 		}
 		return false;
@@ -450,7 +459,7 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	private boolean locationExists(String location) throws SQLException {
 		listOfAirports = getAllAirports();
 		for(Airport airport: listOfAirports){
-			if(location.equals(airport.getCity()));
+			if(location.equals(airport.getCity()))
 			return true;
 		}
 		return false;
@@ -474,11 +483,19 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		}
 	}
 	
+	@Override
+	public void printAllFlights(List<Flight> flights) throws SQLException {
+		for(Flight flight: flights)
+			printFlight(flight);
+	}
+
 	// SEAT INTERFACE IMPLEMENTATION
 
 	@Override
 	public List<Seat> getAllFlightSeats(Integer flightId) throws SQLException {
 
+		List<Seat> listOfSeats = new ArrayList<>();
+		
 		// create an SELECT SQL query
 		String query = "SELECT * FROM seats WHERE flightID = ?";
 
@@ -590,8 +607,9 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		Integer flightId = enterInteger();
 		
 		if(getFlight(flightId) != null){
-			List<Seat> seats = getAllFlightSeats(flightId);
-			System.out.println("SeatID Row Seat# Available FlightID");
+			List<Seat> seats = null;
+			seats = getAllFlightSeats(flightId);
+			System.out.println("     SeatID Row Seat# Available FlightID");
 			for(Seat seat: seats){
 				printSeat(seat);
 			}
@@ -621,9 +639,9 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 
 	@Override
 	public void printSeat(Seat seat) {
-		System.out.println("Seat: " + seat.getSeatID() + ", " + seat.getRow() + ""
-				+ ", " + seat.getSeatNumber() + ", " + seat.isAvailable() + ","
-						+ " " + seat.getFlightID());
+		System.out.println("Seat: " + seat.getSeatID() + ",    " + seat.getRow() + ""
+				+ ",    " + seat.getSeatNumber() + ",    " + seat.isAvailable() + ","
+						+ "    " + seat.getFlightID());
 	}
 
 }

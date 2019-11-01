@@ -15,9 +15,10 @@ import DTO.Flight;
 public class TestFlightManager {
 	
 	static Scanner input = new Scanner(System.in);
-	static SystemManagerDAO manager = new SystemManagerDAO();
 
 	public static void main(String[] args) throws SQLException {
+		
+		SystemManagerDAO manager = new SystemManagerDAO();
 		
 		int option = 0;
 		
@@ -54,19 +55,19 @@ public class TestFlightManager {
 				break;
 			case 4:
 				// list all airports
-				manager.getAllAirports();
+				manager.printAllAirports(manager.getAllAirports());
 				break;
 			case 5:
 				// list all airlines
-				manager.getAllAirlines();
+				manager.printAllAirlines(manager.getAllAirlines());
 				break;
 			case 6:
 				// list all flights
-				listAllFlights();
+				manager.printAllFlights(manager.getAllFlights());
 				break;
 			case 7:
 				// find a flight
-				enterOriginAndDestination();
+				// enterOriginAndDestination();
 				break;
 			case 8:
 				// Book Seat
@@ -81,12 +82,7 @@ public class TestFlightManager {
 		}
 	}
 
-	private static void listAllFlights() throws SQLException {
-		List<Flight> flights = manager.getAllFlights();
-		for(Flight flight: flights)
-			manager.printFlight(flight);
-	}
-
+/*
 	private static void enterOriginAndDestination() throws SQLException {
 		System.out.println("Please enter origin of the flight");
 		String origin = input.next();
@@ -99,4 +95,5 @@ public class TestFlightManager {
 			}
 		}
 	}
+	*/
 }

@@ -18,4 +18,6 @@ public interface FlightDAOInterface {
 
 	// method to print a specific flight
 	public void printFlight(Flight flight);
+
+	void printAllFlights(List<Flight> flights) throws SQLException;
 }
