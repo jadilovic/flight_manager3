@@ -606,32 +606,42 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		
 		Integer flightId = enterInteger();
 		
-		if(getFlight(flightId) != null){
+		if(flightIdExists(flightId)){
 			List<Seat> seats = null;
 			seats = getAllFlightSeats(flightId);
 			System.out.println("     SeatID Row Seat# Available FlightID");
+			List<Integer> listOfSeatsIds = new ArrayList<>();
 			for(Seat seat: seats){
+				listOfSeatsIds.add(seat.getSeatID());
 				printSeat(seat);
 			}
 			System.out.println("Please choose from available seats. Enter seat id.");
 			
 			int seatId = enterInteger();
-			if(getSeatById(seatId).isAvailable() == true){
-				// create an SELECT SQL query
-				String query = "UPDATE seats SET available = ? WHERE seatID = ?";
-				try (
-						// java.sql.Statement
-						PreparedStatement statement = connection.prepareStatement(query);) {
+			if(listOfSeatsIds.contains(seatId)){
+				if(getSeatById(seatId).isAvailable() == true){
+					// create an SELECT SQL query
+					String query = "UPDATE seats SET available = ? WHERE seatID = ?";
+					try (
+							// java.sql.Statement
+							PreparedStatement statement = connection.prepareStatement(query);) {
 
-					// fill in the placeholders/parameters
-					statement.setBoolean(1, false);
-					statement.setInt(2, seatId);
+						// fill in the placeholders/parameters
+						statement.setBoolean(1, false);
+						statement.setInt(2, seatId);
 
-					// execute the query
-					statement.executeUpdate();
+						// execute the query
+						statement.executeUpdate();
+						
+						printSeat(getSeatById(seatId));
+						System.out.println("was booked");
+					}
+				} else {
+					System.out.println("Selected seat is not available");
 				}
-			} else
-				System.out.println("Selected seat is not available");
+			} else {
+				System.out.println("There is no seat with given seat id");
+			}
 		} else
 			System.out.println("There is no flight with given flight id");
 	}
