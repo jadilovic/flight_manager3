@@ -1,6 +1,7 @@
 package DTO;
 
 public class Seat {
+	
 	// seat id
 	private int seatID;
 	
@@ -47,37 +48,26 @@ public class Seat {
 		this.available = available;
 	}
 
-	/**
-	 * @return the seatID
-	 */
 	public int getSeatID() {
 		return seatID;
 	}
 
-	/**
-	 * @param seatID the seatID to set
-	 */
 	public void setSeatID(int seatID) {
 		this.seatID = seatID;
 	}
 
-	/**
-	 * @return the flightID
-	 */
 	public int getFlightID() {
 		return flightID;
 	}
 
-	/**
-	 * @param flightID the flightID to set
-	 */
 	public void setFlightID(int flightID) {
 		this.flightID = flightID;
 	}
 
 	@Override
 	public String toString() {
-		return "Seat [row=" + row + ", seatNumber=" + seatNumber + ", available=" + available + "]";
+		return "Seat: id=" + seatID + ", row=" + row + ", seatNumber=" + seatNumber + ""
+				+ ", available=" + available + ", flightID=" + flightID;
 	}
 	
 	

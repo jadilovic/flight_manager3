@@ -1,16 +1,9 @@
 package com.flight_manager;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
-
-import DAO.ConnectionManager;
 import DAO.SystemManagerDAO;
-import DTO.Airline;
-import DTO.Airport;
-import DTO.Flight;
 
 public class TestFlightManager {
 	

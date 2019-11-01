@@ -85,24 +85,19 @@ public class Flight {
 		this.airport = airport;
 	}
 
-	/**
-	 * @return the flight_name
-	 */
 	public String getFlight_name() {
 		return flight_name;
 	}
 
-	/**
-	 * @param flight_name the flight_name to set
-	 */
 	public void setFlight_name(String flight_name) {
 		this.flight_name = flight_name;
 	}
 
 	@Override
 	public String toString() {
-		return "Flight [id=" + id + ", airline=" + airline + ", seats=" + seats + ", origin=" + origin
-				+ ", destination=" + destination + "]";
+		return "Flight [id=" + id + ", flight_name=" + flight_name + ", airline=" + airline + ""
+				+ ", seats=" + seats + ", origin=" + origin
+				+ ", destination=" + destination + ", airport=" + airport;
 	}
 	
 	

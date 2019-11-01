@@ -1,7 +1,6 @@
 package DAO;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import DTO.Airline;
@@ -20,5 +19,6 @@ public interface AirlineDAOInterface {
 	// method to print a specific airline
 	public void printAirline(Airline airline);
 
+	// printing all airlines
 	void printAllAirlines(List<Airline> airlines) throws SQLException;
 }
