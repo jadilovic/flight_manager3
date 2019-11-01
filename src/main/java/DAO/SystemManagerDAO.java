@@ -24,15 +24,13 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	// connect to the database
 	Connection connection = ConnectionManager.getInstance().getConnection();
 	
-	// create array lists to hold airlines, airports, flights and seats
-	private List<Airline> listOfAirlines = new ArrayList<>();
-	private List<Airport> listOfAirports = new ArrayList<>();
-	private List<Flight> listOfFlights = new ArrayList<>();
-
 	// IMPLEMENTATION OF AIRLINE INTERFACE
 	
 	@Override
 	public List<Airline> getAllAirlines() throws SQLException {
+
+		// create array lists to hold airlines, airports, flights and seats
+		List<Airline> listOfAirlines = new ArrayList<>();
 
 		// create an SELECT SQL query
 		String query = "SELECT * FROM airline";
@@ -171,6 +169,9 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	@Override
 	public List<Airport> getAllAirports() throws SQLException {
 
+		// create list of all Airport objects
+		List<Airport> listOfAirports = new ArrayList<>();
+		
 		// create an SELECT SQL query
 		String query = "SELECT * FROM airport";
 
@@ -296,6 +297,9 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	@Override
 	public List<Flight> getAllFlights() throws SQLException {
 
+		// create list of all flights
+		List<Flight> listOfFlights = new ArrayList<>();
+		
 		// create an SELECT SQL query
 		String query = "SELECT * FROM flight";
 
@@ -448,8 +452,8 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	}
 
 	private boolean flightNameExists(String flightName) throws SQLException {
-		listOfFlights = getAllFlights();
-		for(Flight flight: listOfFlights){
+		List<Flight> flights = getAllFlights();
+		for(Flight flight: flights){
 			if(flight.getFlight_name().equals(flightName))
 				return true;
 		}
@@ -457,8 +461,8 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 	}
 
 	private boolean locationExists(String location) throws SQLException {
-		listOfAirports = getAllAirports();
-		for(Airport airport: listOfAirports){
+		List<Airport> airports = getAllAirports();
+		for(Airport airport: airports){
 			if(location.equals(airport.getCity()))
 			return true;
 		}
@@ -470,6 +474,25 @@ public class SystemManagerDAO implements AirlineDAOInterface, AirportDAOInterfac
 		Integer value = input.nextInt();
 		// input.close();
 		return value;
+	}
+	
+	public void enterOriginAndDestination() throws SQLException {
+		System.out.println("Please enter origin of the flight");
+		String origin = enterString();
+		System.out.println("Please enter destination of the flight");
+		String destination = enterString();
+		int count = 0;
+		for(Flight flight: getAllFlights()){
+			if(flight.getOrigin().equals(origin) && flight.getDestination().equals(destination)){
+				System.out.println("Available flight:");
+				printFlight(flight);
+				count++;
+			} else {
+				continue;
+			}
+		}
+		if(count == 0)
+		System.out.println("There are ne flight available with entered origin and destination");
 	}
 
 	@Override

@@ -61,13 +61,13 @@ public class TestFlightManager {
 				// list all airlines
 				manager.printAllAirlines(manager.getAllAirlines());
 				break;
-			case 6:
+				case 6:
 				// list all flights
 				manager.printAllFlights(manager.getAllFlights());
 				break;
 			case 7:
-				// find a flight
-				// enterOriginAndDestination();
+				// find flight
+				manager.enterOriginAndDestination();
 				break;
 			case 8:
 				// Book Seat
@@ -81,19 +81,4 @@ public class TestFlightManager {
 			}
 		}
 	}
-
-/*
-	private static void enterOriginAndDestination() throws SQLException {
-		System.out.println("Please enter origin of the flight");
-		String origin = input.next();
-		System.out.println("Please enter destination of the flight");
-		String destination = input.next();
-		for(Flight flight: manager.getAllFlights()){
-			if(flight.getOrigin().equals(origin) && flight.getDestination().equals(destination)){
-				System.out.println("Available flight:");
-				System.out.println(flight.toString());
-			}
-		}
-	}
-	*/
 }
